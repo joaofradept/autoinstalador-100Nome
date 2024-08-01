@@ -35,7 +35,7 @@ set "trLicensePath=!contentFolder!\LICENÇA_jogoexemplo.txt"
 set "urlEnd=linkjogoexemplo100Nome"
 set "performBackup=1"
 set "installed=0"
-set "scriptVersion=1.00_310724"
+set "scriptVersion=1.00_010824"
 :main-menu
 echo                               Copyright (C) 2024  João Frade
 echo       Código licenciado sob a Licença Pública Geral GNU v3.0
