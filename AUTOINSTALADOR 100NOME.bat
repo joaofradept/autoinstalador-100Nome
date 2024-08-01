@@ -439,7 +439,8 @@ if %installed% equ 1 (
 		goto :end2
 	)
 	if /i "!choice!"=="J" (
-		start "" "%gameDir%\%fileName%"
+		cd /d "%gameDir%"
+		start %fileName%
 		goto :end2
 	)
 )
