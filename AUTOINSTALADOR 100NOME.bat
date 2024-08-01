@@ -1133,7 +1133,7 @@ echo https://github.com/joaofradept/autoinstalador-100Nome/.
 echo.
 echo Se não conseguir ler a licença acima, pode visualizar o código do
 echo programa num editor de texto ou consultar a licença online em
-echo http://www.gnu.org/licenses/.
+echo https://www.gnu.org/licenses/gpl-3.0.html.
 echo.
 echo Prime qualquer tecla para voltar ao Menu Inicial.
 pause >nul
