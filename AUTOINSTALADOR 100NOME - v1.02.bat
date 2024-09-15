@@ -19,26 +19,28 @@ REM Para arrays que contenham elementos sem espaços apenas, pode-se representar
 REM "set nomeArray=elemento1 el2 el3"
 REM Para arrays vazios, representar como:
 REM "set nomeArray="
-set "gameName=Jogo exemplo"
-set "packName=Pacote 100Nome"
+set "gameName=Nenhum jogo encontrado"
 set "fileName=jogoexemplo.exe"
 set "expectedFiles="
 set expectedDirs="Pasta 1" "Pasta 2"
 set "filesForRemoval="
-set "trLicensePath=!spContentFolder!\LICENÇA_jogoexemplo.txt"
 set "urlEnd=linkjogoexemplo100Nome"
+set "trLicenseFileName=LICENÇA_jogoexemplo.txt"
 REM Não alterar nada daqui para baixo.
 set "dirsToSearch=C D E F G"
 set "gameDir="
 set "searchedDirs="
 set "contentsDir="
+set "packName="
+set "trNotesFileName=NOTAS DA TRADUÇÃO.txt"
 set "helpFileName=AJUDA 100NOME.txt"
 set "backupPath=!spContentFolder!\cópia de segurança"
 set "partBackupEnding= - parcial"
 set "performBackup=1"
 set "installed=0"
 set "scriptVersion=1.02_130924"
-:main-menu
+
+:main-menu-intro
 echo                               Copyright (C) 2024  João Frade
 echo       Código licenciado sob a Licença Pública Geral GNU v3.0
 echo              Este programa vem SEM QUALQUER TIPO DE GARANTIA
@@ -56,25 +58,75 @@ ping -n 1 127.0.0.1 >nul
 echo  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝    v%scriptVersion%
 ping -n 1 127.0.0.1 >nul
 echo.
+
+:loadVariables
+REM Caminho para o ficheiro de texto
+set "inputFile=autoinstalacao"
+
+REM Variáveis necessárias para a configuração
+set "neededConfigNames=#gameName#fileName#expectedFiles#expectedDirs#filesForRemoval#trLicenseFileName#urlEnd"
+set "existingConfigNames="
+
+REM Lê o ficheiro linha por linha
+for /f "tokens=1,* delims= " %%a in (%inputFile%) do (
+    set "varName=%%a"
+    set "varValue=%%b"
+	
+    REM Adiciona o nome da variável encontrada à lista de configurações existentes
+    set "existingConfigNames=!existingConfigNames!#%%a"
+
+    REM Define a variável com o valor
+    set "!varName!=!varValue!"
+)
+
+REM echo existing: %existingConfigNames%
+REM echo needed  : %neededConfigNames%
+
+:main-menu
 echo SCRIPT DE INSTALAÇÃO AUTOMÁTICA DA TRADUÇÃO DO JOGO:
-echo !gameName!
+echo %gameName%
 echo 100NOME.BLOGS.SAPO.PT
 echo.
 echo Antes de começar:
 echo 1º Certifica-te de que a pasta que contém os pacotes foi extraída do Zip.
 echo 2º Certifica-te de que este script foi executado a partir dessa pasta já extraída.
-echo 3º Cada script de instalação é diferente. Não o utilizes para outros pacotes 100Nome.
 echo.
-echo Prime qualquer tecla para avançar.
-pause >nul
+
+if not %existingConfigNames%==%neededConfigNames% (
+	echo =========================================================
+	echo.
+	echo Não é possível continuar com a instalação.
+	echo.
+	echo Verifica primeiro os pontos acima
+	echo e depois se o pacote está preparado para ser autoinstalado.
+	echo.
+	echo Para uma solução rápida, contacta o 100Nome pelo Discord em:
+	echo https://discord.gg/Xv7ax2VkEp
+	echo.
+	echo Prime qualquer tecla para terminar a instalação.
+	pause >nul
+	goto :interrupt
+)
+echo [A] para avançar.
+echo [CO] para configurações
+echo [LI] para licença do instalador
 echo.
+set /p "choice=Introduzir letra e premir Enter > "
+if /i "!choice!"=="LI" goto :license
+if /i "!choice!"=="CO" goto :configs
+if /i not "!choice!"=="A" (
+	cls
+	goto :main-menu-intro
+)
+echo.
+echo =========================================================
 echo.
 echo Os seguintes pacotes estão disponíveis para instalação:
 set packList=0
 set i=0
 for /d %%d in (*.*) do (
 	set "dir=%%d"
-	if /i "!dir:~0,17!"=="Pacote 100Nome - " (
+	if /i "!dir:~0,14!"=="Pacote 100Nome" (
 		set packList[!i!]=%%d
 		set /A i+=1
 		echo [!i!] para !dir:~17!
@@ -86,6 +138,7 @@ echo e introduz o número correspondente ao pacote a instalar /
 echo.
 set /p "choice=Introduzir número e premir Enter > "
 set /A choice-=1
+set packName=!packList[%choice%]!
 echo.
 echo =========================================================
 echo.
@@ -95,13 +148,12 @@ echo.
 REM Inicializar a variável para saber se o diretório foi encontrado
 set "foundDir=0"
 echo Procurar automaticamente a pasta de instalação do jogo?
-echo / [S] para sim		[CO] para configurações /
-echo / [LI] para licença	Outra Letra para sair /
+echo.
+echo [S] para sim
+echo Outra Letra para sair
 echo.
 set /p "choice=Introduzir letra e premir Enter > "
 if /i "!choice!"=="S" goto :searchUnits
-if /i "!choice!"=="CO" goto :configs
-if /i "!choice!"=="LI" goto :license
 goto :interrupt
 
 :searchUnits
@@ -177,7 +229,10 @@ for /f "delims=" %%a in ('dir /b /a-d /s "!dirToSearch!%fileName%" 2^>nul') do (
 		echo !gameDir!
 		echo.
 		echo Instalar neste diretório?
-		echo / [S] para sim		[N] para continuar pesquisa		Outra Letra para sair /
+		echo.
+		echo [S] para sim
+		echo [N] para continuar pesquisa
+		echo Outra Letra para sair
 		echo.
 		set /p "choice=Introduzir letra e premir Enter > "
 		if /i "!choice!"=="S" goto :install
@@ -232,14 +287,17 @@ echo =========================================================
 echo.
 echo Foi encontrada uma cópia de segurança anterior.
 echo Parece que a tradução já foi instalada antes.
+echo.
 echo "Continuar" instalará sem criar uma nova cópia de segurança.
-echo Ou então podes continuar criando uma nova cópia de segurança do conteúdo atual.
+echo Ou então podes "Continuar com Nova Cópia de Segurança" do conteúdo atual.
 echo Podes ainda ver que cópias existem e eliminar as suas pastas manualmente.
 
 :backupoption
 echo.
-echo / [C] para Continuar	[CS] para Continuar com Nova Cópia de Segurança /
-echo / [V] para Ver Cópias de Segurança Existentes	Outra Letra para sair /
+echo [C] para Continuar
+echo [CS] para Continuar com Nova Cópia de Segurança
+echo [V] para Ver Cópias de Segurança Existentes
+echo Outra Letra para sair
 echo.
 set /p "choice=Introduzir letra e premir Enter > "
 if /i "!choice!"=="CS" (
@@ -273,6 +331,7 @@ if /i "!choice!"=="CS" (
 		)
 		goto :copyFiles
 	)
+	REM Outra letra - sair
 	goto :interrupt
 )
 
@@ -318,7 +377,7 @@ if !performBackup! equ 0 (
 REM Antes de copiar novos ficheiros para o diretório do jogo, salvaguardar os ficheiros existentes para recuperação posterior
 echo Será feita uma cópia de segurança dos ficheiros em:
 echo !backupPath!
-for /r "%~dp0" %%F in (*) do (
+for /r "%~dp0" %%F in (!packName!\*) do (
     set "sourceFile=%%F"
     
     REM Obter o caminho relativo a partir de %~dp0
@@ -406,14 +465,12 @@ echo.
 echo O pacote de tradução será instalado no diretório do jogo...
 echo.
 echo Os ficheiros de:
-echo %~dp0
+echo %~dp0!packName!
 echo Serão copiados para:
 echo !gameDir!
 echo.
-xcopy /e /i /y "%~dp0*" "!gameDir!"
+xcopy /e /i /y "%~dp0!packName!\*" "!gameDir!"
 set "scriptFileName=%~nx0"
-del "!gameDir!\!scriptFileName!"
-del "!gameDir!\!helpFileName!"
 
 echo.
 echo Na ausência de erros em cima,
@@ -444,21 +501,33 @@ echo FIM DO PROGRAMA
 echo.
 echo.
 echo.
-echo / [A] para abrir Ajuda		[L] para Licença da Tradução /
+echo [A] para abrir Ajuda
+if not !packName! equ "" (
+	echo [N] para Notas da Tradução
+	echo [L] para Licença da Tradução
+)
 if %installed% equ 1 (
-	echo / [P] para abrir Pasta do Jogo		[J] para Iniciar Jogo /
+	echo [P] para abrir Pasta do Jogo
+	echo [J] para Iniciar Jogo
 )
 echo.
 echo // [T] para Terminar Instalação //
 echo.
 set /p "choice=Introduzir letra e premir Enter > "
 if /i "!choice!"=="A" (
-	start "" ".\%helpFileName%"
+	start "" "%helpFileName%"
 	goto :end2
 )
-if /i "!choice!"=="L" (
-	start "" "%trLicensePath%"
-	goto :end2
+
+if not !packName! equ "" (
+	if /i "!choice!"=="N" (
+		start "" "!packName!\!spContentFolder!\%trNotesFileName%"
+		goto :end2
+	)
+	if /i "!choice!"=="L" (
+		start "" "!packName!\!spContentFolder!\%trLicenseFileName%"
+		goto :end2
+	)
 )
 
 if %installed% equ 1 (
@@ -497,12 +566,12 @@ ping -n 1 127.0.0.1 >nul
 echo.
 echo =========================================================
 echo                       CONFIGURAÇÕES
-echo             / [V] para voltar ao Menu Inicial /
+echo              [V] para voltar ao Menu Inicial
 echo =========================================================
 echo.
 echo - PESQUISA PELO JOGO
 echo.
-echo UD para Alterar unidades de disco e a sua ordem
+echo [UD] para Alterar unidades de disco e a sua ordem
 echo Ordem atual: "!dirsToSearch!"
 echo.
 echo.
@@ -512,9 +581,10 @@ if /i "!choice!"=="UD" (
 )
 if /i "!choice!"=="V" (
 	cls
-	goto :main-menu
+	goto :main-menu-intro
 )
 goto :configs
+
 :config-UD
 echo.
 echo Ordem atual: "!dirsToSearch!"
@@ -532,6 +602,7 @@ echo Prime qualquer tecla para avançar.
 echo.
 pause >nul
 goto :configs
+
 :license
 cls
 echo                     GNU GENERAL PUBLIC LICENSE
@@ -1166,4 +1237,4 @@ echo.
 echo Prime qualquer tecla para voltar ao Menu Inicial.
 pause >nul
 cls
-goto :main-menu
+goto :main-menu-intro

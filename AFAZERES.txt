@@ -1,0 +1,7 @@
+caso pacote não tenha nome, dar nome "Normal"
+caso haja apenas um pacote sem nome
+	não mostrar menu
+	dizer que vai ser instalada a versão X (nome da versão)
+
+fazer backup de pastas também (ver caso do Blur)
+não criar pasta de backup se não for necessário: informar nesse caso

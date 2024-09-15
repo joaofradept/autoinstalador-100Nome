@@ -1,0 +1,7 @@
+gameName Jogo exemplo
+fileName jogoexemplo.exe
+expectedFiles
+expectedDirs "Pasta 1" "Pasta 2"
+filesForRemoval
+trLicenseFileName LICENÇA_jogoexemplo.txt
+urlEnd linkjogoexemplo100Nome
