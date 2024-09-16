@@ -128,9 +128,6 @@ set i=-1
 REM Ciclo para listar os pacotes encontrados
 for /d %%d in (*.*) do (
     set "dir=%%d"
-	if "!dir:~14,1!"=="" (
-		set "dir=!dir! - %packDefaultName%"
-	)
     if /i "!dir:~0,14!"=="%packStartName%" (
         set /A i+=1
         set packList[!i!]=!dir!
@@ -144,7 +141,7 @@ echo.
 REM Verifica quantos pacotes foram encontrados
 if %i%==0 (
     echo Está disponível um pacote de tradução para o jogo %gameName%.
-	if not "!packList[0]:~17!"=="%packDefaultName%" (
+	if not "!packList[0]:~14,1!"=="" (
 		echo Nome do pacote: !packList[0]:~17!
 	)
 	echo.
@@ -156,7 +153,11 @@ if %i%==0 (
     REM Apenas lista pacotes se houver mais de um
     for /L %%n in (0,1,%i%) do (
 		set /A num=%%n+1
-        echo [!num!] para !packList[%%n]:~17!
+		set "optionName=!packList[%%n]:~17!"
+		if "!packList[%%n]:~14,1!"=="" (
+			set "optionName=%packDefaultName%"
+		)
+        echo [!num!] para !optionName!
     )
     echo.
     echo / Verifica qual é a versão do jogo que tens instalada
@@ -194,7 +195,11 @@ echo.
 echo =========================================================
 echo.
 if %i% gtr 0 (
-	echo O pacote selecionado foi: !packList[%choice%]:~17!
+	set "optionName=!packList[%choice%]:~17!"
+	if "!packList[%choice%]:~14,1!"=="" (
+		set "optionName=%packDefaultName%"
+	)
+	echo O pacote selecionado foi: !optionName!
 	echo.
 )
 :search

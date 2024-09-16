@@ -5,3 +5,5 @@ caso haja apenas um pacote sem nome
 
 fazer backup de pastas também (ver caso do Blur)
 não criar pasta de backup se não for necessário: informar nesse caso
+
+acesso negado a instalar nos programas?
