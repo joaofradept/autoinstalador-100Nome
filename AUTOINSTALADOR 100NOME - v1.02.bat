@@ -32,13 +32,15 @@ set "gameDir="
 set "searchedDirs="
 set "contentsDir="
 set "packName="
+set "packStartName=Pacote 100Nome"
+set "packDefaultName=pacote normal"
 set "trNotesFileName=NOTAS DA TRADUÇÃO.txt"
 set "helpFileName=AJUDA 100NOME.txt"
 set "backupPath=!spContentFolder!\cópia de segurança"
 set "partBackupEnding= - parcial"
 set "performBackup=1"
 set "installed=0"
-set "scriptVersion=1.02_130924"
+set "scriptVersion=1.02_160924"
 
 :main-menu-intro
 echo                               Copyright (C) 2024  João Frade
@@ -83,8 +85,9 @@ REM echo existing: %existingConfigNames%
 REM echo needed  : %neededConfigNames%
 
 :main-menu
-echo SCRIPT DE INSTALAÇÃO AUTOMÁTICA DA TRADUÇÃO DO JOGO:
-echo %gameName%
+echo SCRIPT PARA INSTALAÇÃO AUTOMÁTICA
+echo DA TRADUÇÃO DO JOGO: "  %gameName%  "
+echo.
 echo 100NOME.BLOGS.SAPO.PT
 echo.
 echo Antes de começar:
@@ -118,33 +121,83 @@ if /i not "!choice!"=="A" (
 	cls
 	goto :main-menu-intro
 )
+
+:listPacks
+set packList=0
+set i=-1
+REM Ciclo para listar os pacotes encontrados
+for /d %%d in (*.*) do (
+    set "dir=%%d"
+	if "!dir:~14,1!"=="" (
+		set "dir=!dir! - %packDefaultName%"
+	)
+    if /i "!dir:~0,14!"=="%packStartName%" (
+        set /A i+=1
+        set packList[!i!]=!dir!
+    )
+)
+
+:packChoice
 echo.
 echo =========================================================
 echo.
-echo Os seguintes pacotes estão disponíveis para instalação:
-set packList=0
-set i=0
-for /d %%d in (*.*) do (
-	set "dir=%%d"
-	if /i "!dir:~0,14!"=="Pacote 100Nome" (
-		set packList[!i!]=%%d
-		set /A i+=1
-		echo [!i!] para !dir:~17!
+REM Verifica quantos pacotes foram encontrados
+if %i%==0 (
+    echo Está disponível um pacote de tradução para o jogo %gameName%.
+	if not "!packList[0]:~17!"=="%packDefaultName%" (
+		echo Nome do pacote: !packList[0]:~17!
 	)
+	echo.
+	echo Prime qualquer tecla para avançar.
+    pause >nul
+    set choice=0
+) else if %i% gtr 0 (
+	echo Os seguintes pacotes de tradução estão disponíveis para instalação:
+    REM Apenas lista pacotes se houver mais de um
+    for /L %%n in (0,1,%i%) do (
+		set /A num=%%n+1
+        echo [!num!] para !packList[%%n]:~17!
+    )
+    echo.
+    echo / Verifica qual é a versão do jogo que tens instalada
+    echo e introduz o número correspondente ao pacote a instalar. /
+    echo.
+    set /p "choice=Introduzir número e premir Enter > "
+	set /A choice-=1
+) else if %i%==-1 (
+	echo Não foi encontrado nenhum pacote válido
+	echo no diretório onde se encontra este autoinstalador.
+	echo.
+	echo Certifica-te de que este script se encontra ao pé dos pacotes de tradução.
+	echo.
+	echo Prime qualquer tecla para terminar a instalação.
+	pause >nul
+	goto :interrupt
 )
-echo.
-echo / Verifica qual é a versão do jogo que tens instalada
-echo e introduz o número correspondente ao pacote a instalar /
-echo.
-set /p "choice=Introduzir número e premir Enter > "
-set /A choice-=1
+
+REM Verificar se a escolha está fora do intervalo
+if %choice% lss 0 (
+	echo.
+	echo Opção inválida. Introduz uma opção válida.
+    goto :packChoice
+)
+
+if %choice% gtr %i% (
+	echo.
+	echo Opção inválida. Introduz uma opção válida.
+    goto :packChoice
+)
+
+REM Define o nome do pacote escolhido
 set packName=!packList[%choice%]!
 echo.
 echo =========================================================
 echo.
-echo O pacote selecionado foi: !packList[%choice%]:~17!
+if %i% gtr 0 (
+	echo O pacote selecionado foi: !packList[%choice%]:~17!
+	echo.
+)
 :search
-echo.
 REM Inicializar a variável para saber se o diretório foi encontrado
 set "foundDir=0"
 echo Procurar automaticamente a pasta de instalação do jogo?
@@ -1227,11 +1280,11 @@ echo copy of the Program in return for a fee.
 echo.
 echo                      END OF TERMS AND CONDITIONS
 echo.
-echo Pode aceder à versão mais recente do código em:
+echo Podes aceder à versão mais recente do código em:
 echo https://github.com/joaofradept/autoinstalador-100Nome/.
 echo.
-echo Se não conseguir ler a licença acima, pode visualizar o código do
-echo programa num editor de texto ou consultar a licença online em
+echo Se não conseguires ler a licença acima, podes visualizá-la abrindo o
+echo script com um editor de texto ou então consulta a licença online em
 echo https://www.gnu.org/licenses/gpl-3.0.html.
 echo.
 echo Prime qualquer tecla para voltar ao Menu Inicial.
