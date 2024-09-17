@@ -528,6 +528,7 @@ echo Serão copiados para:
 echo !gameDir!
 echo.
 xcopy /e /i /y "%~dp0!packName!\*" "!gameDir!"
+REM robocopy "%~dp0!packName!" "!gameDir!" /e /copyall /r:3 /w:5 /mt
 set "scriptFileName=%~nx0"
 
 echo.
