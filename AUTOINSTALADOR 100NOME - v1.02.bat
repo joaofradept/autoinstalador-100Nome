@@ -40,7 +40,7 @@ set "backupPath=!spContentFolder!\cópia de segurança"
 set "partBackupEnding= - parcial"
 set "performBackup=1"
 set "installed=0"
-set "scriptVersion=1.02_160924"
+set "scriptVersion=1.02_180924_l2"
 
 :main-menu-intro
 echo                               Copyright (C) 2024  João Frade
@@ -57,7 +57,7 @@ echo  ██║████╔╝██║████╔╝██║██║�
 ping -n 1 127.0.0.1 >nul
 echo  ██║╚██████╔╝╚██████╔╝██║ ╚████║╚██████╔╝██║ ╚═╝ ██║███████╗
 ping -n 1 127.0.0.1 >nul
-echo  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝    v%scriptVersion%
+echo  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝ v%scriptVersion%
 ping -n 1 127.0.0.1 >nul
 echo.
 
@@ -95,7 +95,7 @@ echo 1º Certifica-te de que a pasta que contém os pacotes foi extraída do Zip
 echo 2º Certifica-te de que este script foi executado a partir dessa pasta já extraída.
 echo.
 
-if not %existingConfigNames%==%neededConfigNames% (
+if not "%existingConfigNames%"=="%neededConfigNames%" (
 	echo =========================================================
 	echo.
 	echo Não é possível continuar com a instalação.
@@ -561,7 +561,7 @@ echo.
 echo.
 echo.
 echo [A] para abrir Ajuda
-if not !packName! equ "" (
+if not "!packName!"=="" (
 	echo [N] para Notas da Tradução
 	echo [L] para Licença da Tradução
 )
@@ -578,7 +578,8 @@ if /i "!choice!"=="A" (
 	goto :end2
 )
 
-if not !packName! equ "" (
+if not "!packName!"=="" (
+	echo packname = !packName!
 	if /i "!choice!"=="N" (
 		start "" "!packName!\!spContentFolder!\%trNotesFileName%"
 		goto :end2
