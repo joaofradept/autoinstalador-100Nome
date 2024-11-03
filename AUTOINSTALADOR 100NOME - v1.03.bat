@@ -40,7 +40,17 @@ set "backupPath=!spContentFolder!\cópia de segurança"
 set "partBackupEnding= - parcial"
 set "performBackup=1"
 set "installed=0"
-set "scriptVersion=1.02_180924_l2"
+set "scriptVersion=1.03_031124_l1"
+
+REM Verifica se já está a ser executado como administrador
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo A reiniciar o script com permissões de administrador...
+    
+    REM Relança o script como administrador
+    powershell -Command "Start-Process '%~f0' -Verb RunAs"
+    exit /b
+)
 
 :main-menu-intro
 echo                               Copyright (C) 2024  João Frade
@@ -60,6 +70,8 @@ ping -n 1 127.0.0.1 >nul
 echo  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝ v%scriptVersion%
 ping -n 1 127.0.0.1 >nul
 echo.
+
+cd /d "%~dp0"
 
 :loadVariables
 REM Caminho para o ficheiro de texto
@@ -128,6 +140,8 @@ set i=-1
 REM Ciclo para listar os pacotes encontrados
 for /d %%d in (*.*) do (
     set "dir=%%d"
+	
+    REM Verifica se o diretório começa com o nome especificado
     if /i "!dir:~0,14!"=="%packStartName%" (
         set /A i+=1
         set packList[!i!]=!dir!
