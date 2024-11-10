@@ -1,0 +1,4 @@
+fileName Blur.exe
+expectedFiles cache\gamedata_boot.pak
+expectedDirs "cache" "levels"
+filesForRemoval cache\gamedata.pak

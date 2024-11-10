@@ -1,7 +1,2 @@
 gameName Blur
-fileName Blur.exe
-expectedFiles cache\gamedata_boot.pak
-expectedDirs "cache" "levels"
-filesForRemoval cache\gamedata.pak
-trLicenseFileName LICENÇA_Blur.txt
 urlEnd blur-jogo-traducao-portugues-pt-pt-br-23886
