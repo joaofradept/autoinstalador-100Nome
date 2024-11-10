@@ -40,7 +40,7 @@ set "backupPath=!spContentFolder!\cópia de segurança"
 set "partBackupEnding= - parcial"
 set "performBackup=1"
 set "installed=0"
-set "scriptVersion=1.03_031124_l1"
+set "scriptVersion=1.04_101124_l1"
 
 REM Verifica se já está a ser executado como administrador
 net session >nul 2>&1
@@ -231,7 +231,7 @@ REM Constrói o caminho completo do ficheiro e armazena-o numa variável tempor�
 set "packInputFile=!packName!\%inputFile%"
 
 REM Lê o ficheiro linha por linha
-echo !packName!\%inputFile%
+REM echo !packName!\%inputFile%
 for /f "tokens=1,* delims= " %%a in ('type "!packInputFile!"') do (
     set "varName=%%a"
     set "varValue=%%b"
@@ -239,7 +239,7 @@ for /f "tokens=1,* delims= " %%a in ('type "!packInputFile!"') do (
     REM Adiciona o nome da variável encontrada à lista de configurações existentes
     set "existingConfigNames=!existingConfigNames!#%%a"
 	
-    echo !varName! é !varValue!
+    REM echo !varName! é !varValue!
 
     REM Define a variável com o valor
     set "!varName!=!varValue!"
