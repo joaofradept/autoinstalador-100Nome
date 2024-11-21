@@ -40,7 +40,7 @@ set "backupPath=!spContentFolder!\cópia de segurança"
 set "partBackupEnding= - parcial"
 set "performBackup=1"
 set "installed=0"
-set "scriptVersion=1.04_101124_l1"
+set "scriptVersion=1.04_121124_l2"
 
 REM Verifica se já está a ser executado como administrador
 net session >nul 2>&1
@@ -638,7 +638,7 @@ if /i "!choice!"=="A" (
 )
 
 if not "!packName!"=="" (
-	echo packname = !packName!
+	REM echo packname = !packName!
 	if /i "!choice!"=="N" (
 		start "" "!packName!\!spContentFolder!\%trNotesFileName%"
 		goto :end2
