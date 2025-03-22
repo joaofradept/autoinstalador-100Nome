@@ -21,6 +21,7 @@ REM Para arrays vazios, representar como:
 REM "set nomeArray="
 set "gameName=Nenhum jogo encontrado"
 set "fileName=jogoexemplo.exe"
+set "baseUpLevels=0"
 set "expectedFiles="
 set expectedDirs="Pasta 1" "Pasta 2"
 set "filesForRemoval="
@@ -28,6 +29,7 @@ set "urlEnd=linkjogoexemplo100Nome"
 set "trLicenseFileName=LICENÇA_jogoexemplo.txt"
 REM Não alterar nada daqui para baixo.
 set "dirsToSearch=C D E F G"
+set "exeDir="
 set "gameDir="
 set "searchedDirs="
 set "contentsDir="
@@ -40,7 +42,7 @@ set "backupPath=!spContentFolder!\cópia de segurança"
 set "partBackupEnding= - parcial"
 set "performBackup=1"
 set "installed=0"
-set "scriptVersion=1.04_121124_l2"
+set "scriptVersion=1.5.1_220325"
 
 REM Verifica se já está a ser executado como administrador
 net session >nul 2>&1
@@ -67,7 +69,7 @@ echo  ██║████╔╝██║████╔╝██║██║�
 ping -n 1 127.0.0.1 >nul
 echo  ██║╚██████╔╝╚██████╔╝██║ ╚████║╚██████╔╝██║ ╚═╝ ██║███████╗
 ping -n 1 127.0.0.1 >nul
-echo  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝ v%scriptVersion%
+echo  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝   v%scriptVersion%
 ping -n 1 127.0.0.1 >nul
 echo.
 
@@ -224,7 +226,7 @@ if %i% gtr 0 (
 
 :loadPackVariables
 REM Variáveis necessárias para a configuração (específicas ao pacote escolhido)
-set "neededConfigNames=#fileName#expectedFiles#expectedDirs#filesForRemoval#trLicenseFileName"
+set "neededConfigNames=#fileName#baseUpLevels#expectedFiles#expectedDirs#filesForRemoval#trLicenseFileName"
 set "existingConfigNames="
 
 REM Constrói o caminho completo do ficheiro e armazena-o numa variável temporária
@@ -302,7 +304,22 @@ echo A procurar na unidade !dirToSearch!...
 echo.
 echo Não feches esta janela.
 for /f "delims=" %%a in ('dir /b /a-d /s "!dirToSearch!%fileName%" 2^>nul') do (
-    set "baseDir=%%~dpa"
+    set "foundExeDir=%%~dpa"
+	REM echo upLev: !baseUpLevels!
+
+	REM Inicializa baseDir com o caminho inicial
+	set "baseDir=!foundExeDir!"
+
+	REM Remove a barra final do caminho se existir
+	if "!baseDir:~-1!"=="\" set "baseDir=!baseDir:~0,-1!"
+
+	REM Ciclo para subir o número especificado de níveis
+	for /L %%i in (1,1,!baseUpLevels!) do (
+		for %%j in ("!baseDir!\..\") do set "baseDir=%%~fj"
+	)
+	echo.
+	echo foundExeDir: !foundExeDir!
+	echo baseDir: !baseDir!
 	
 	echo.
 	echo =========================================================
@@ -338,7 +355,8 @@ for /f "delims=" %%a in ('dir /b /a-d /s "!dirToSearch!%fileName%" 2^>nul') do (
 		echo.
 		echo Jogo não encontrado neste diretório.
 	) else (
-		set "gameDir=%%~dpa"
+		set "exeDir=!foundExeDir!"
+		set "gameDir=!baseDir!"
 		echo.
 		echo =========================================================
 		echo.
@@ -662,7 +680,7 @@ if %installed% equ 1 (
 		goto :end2
 	)
 	if /i "!choice!"=="J" (
-		cd /d "%gameDir%"
+		cd /d "%exeDir%"
 		start "" "%fileName%"
 		goto :end2
 	)
