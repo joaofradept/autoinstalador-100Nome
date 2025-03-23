@@ -128,7 +128,7 @@ echo [A] para avançar.
 echo [CO] para configurações
 echo [LI] para licença do instalador
 echo.
-set /p "choice=Introduzir letra e premir Enter > "
+set /p "choice=Introduzir letra/s e premir Enter > "
 if /i "!choice!"=="LI" goto :license
 if /i "!choice!"=="CO" goto :configs
 if /i not "!choice!"=="A" (
@@ -271,7 +271,7 @@ echo.
 echo [S] para sim
 echo Outra Letra para sair
 echo.
-set /p "choice=Introduzir letra e premir Enter > "
+set /p "choice=Introduzir letra/s e premir Enter > "
 if /i "!choice!"=="S" goto :searchUnits
 goto :interrupt
 
@@ -371,7 +371,7 @@ for /f "delims=" %%a in ('dir /b /a-d /s "!dirToSearch!%fileName%" 2^>nul') do (
 		echo [N] para continuar pesquisa
 		echo Outra Letra para sair
 		echo.
-		set /p "choice=Introduzir letra e premir Enter > "
+		set /p "choice=Introduzir letra/s e premir Enter > "
 		if /i "!choice!"=="S" goto :install
 		if /i "!choice!"=="N" (
 			echo.
@@ -436,7 +436,7 @@ echo [CS] para Continuar com Nova Cópia de Segurança
 echo [V] para Ver Cópias de Segurança Existentes
 echo Outra Letra para sair
 echo.
-set /p "choice=Introduzir letra e premir Enter > "
+set /p "choice=Introduzir letra/s e premir Enter > "
 if /i "!choice!"=="CS" (
 	echo.
 	echo O programa vai continuar...
@@ -658,7 +658,7 @@ if %installed% equ 1 (
 echo.
 echo // [T] para Terminar Instalação //
 echo.
-set /p "choice=Introduzir letra e premir Enter > "
+set /p "choice=Introduzir letra/s e premir Enter > "
 if /i "!choice!"=="A" (
 	start "" "%helpFileName%"
 	goto :end2
@@ -718,13 +718,13 @@ echo.
 echo - BUSCA AUTOMÁTICA PELO JOGO
 echo.
 echo [UD] para Alterar unidades de disco na busca e a sua ordem
-echo      / A busca automática segue a ordem indicada. /
+echo       / A busca automática segue a ordem indicada. /
 echo.
 echo [ Ordem atual: "!dirsToSearch!" ]
 echo.
 echo.
 echo [LE] para Definir a localização do executável do jogo
-echo      / Isto desativa a busca automática. /
+echo         / Isto desativa a busca automática. /
 echo.
 if not "!exeDir!"=="" (
 	echo [ Localização definida: "!exeDir!" ]
@@ -733,7 +733,7 @@ if not "!exeDir!"=="" (
 )
 echo.
 echo.
-set /p "choice=Introduzir opção e premir Enter > "
+set /p "choice=Introduzir letra/s e premir Enter > "
 if /i "!choice!"=="UD" (
 	goto :config-UD
 )
@@ -752,8 +752,8 @@ echo =========================================================
 echo.
 echo [ Ordem atual: "!dirsToSearch!" ]
 echo.
-echo / Como introduzir: sem aspas; elementos separados por espaço. /
-echo / Deixar vazio para manter igual. /
+echo / Como introduzir: sem aspas; elementos separados por espaço.
+echo             Deixar vazio para manter igual. /
 echo.
 set /p "choice=Introduzir nova ordem e premir Enter > "
 echo.
@@ -775,8 +775,8 @@ if not "!exeDir!"=="" (
     echo [ A busca automática está ativada. ]
 )
 echo.
-echo / Como introduzir: localização do executável completa, sem aspas. /
-echo / Deixar vazio para ativar a busca automática. /
+echo / Como introduzir: localização do executável completa, sem aspas.
+echo         Deixar vazio para ativar a busca automática. /
 echo.
 set /p "choice=Introduzir localização e premir Enter > "
 echo.
