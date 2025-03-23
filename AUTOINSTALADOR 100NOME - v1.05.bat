@@ -317,10 +317,11 @@ for /f "delims=" %%a in ('dir /b /a-d /s "!dirToSearch!%fileName%" 2^>nul') do (
 	for /L %%i in (1,1,!baseUpLevels!) do (
 		for %%j in ("!baseDir!\..\") do set "baseDir=%%~fj"
 	)
+	REM Adiciona a barra final para poder combinar com subpastas
 	set "baseDir=!baseDir!\"
 	echo.
-	echo foundExeDir: !foundExeDir!
-	echo baseDir: !baseDir!
+	REM echo foundExeDir: !foundExeDir!
+	REM echo baseDir: !baseDir!
 	
 	echo.
 	echo =========================================================
