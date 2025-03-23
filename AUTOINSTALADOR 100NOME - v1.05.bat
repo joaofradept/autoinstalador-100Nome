@@ -713,15 +713,30 @@ echo                       CONFIGURAÇÕES
 echo              [V] para voltar ao Menu Inicial
 echo =========================================================
 echo.
-echo - PESQUISA PELO JOGO
+echo - BUSCA AUTOMÁTICA PELO JOGO
 echo.
-echo [UD] para Alterar unidades de disco e a sua ordem
-echo Ordem atual: "!dirsToSearch!"
+echo [UD] para Alterar unidades de disco na busca e a sua ordem
+echo      / A busca automática segue a ordem indicada. /
+echo.
+echo [ Ordem atual: "!dirsToSearch!" ]
+echo.
+echo.
+echo [LE] para Definir a localização do executável do jogo
+echo      / Isto desativa a busca automática. /
+echo.
+if not "!exeDir!"=="" (
+	echo [ Localização definida: "!exeDir!" ]
+) else (
+    echo [ A busca automática está ativada. ]
+)
 echo.
 echo.
 set /p "choice=Introduzir opção e premir Enter > "
 if /i "!choice!"=="UD" (
 	goto :config-UD
+)
+if /i "!choice!"=="LE" (
+	goto :config-LE
 )
 if /i "!choice!"=="V" (
 	cls
@@ -731,13 +746,45 @@ goto :configs
 
 :config-UD
 echo.
-echo Ordem atual: "!dirsToSearch!"
+echo =========================================================
+echo.
+echo [ Ordem atual: "!dirsToSearch!" ]
 echo.
 echo / Como introduzir: sem aspas; elementos separados por espaço. /
-set /p "choice=Introduzir nova sequência > "
-set "dirsToSearch=%choice%"
+echo / Deixar vazio para manter igual. /
 echo.
-echo Nova ordem: "!dirsToSearch!"
+set /p "choice=Introduzir nova ordem e premir Enter > "
+echo.
+if not "%choice%"=="ud" (
+	set "dirsToSearch=%choice%"
+	echo [ Nova ordem: "!dirsToSearch!" ]
+) else (
+    echo [ A ordem não foi alterada. ]
+)
+goto :end-config
+
+:config-LE
+echo.
+echo =========================================================
+echo.
+if not "!exeDir!"=="" (
+	echo [ Localização definida: "!exeDir!" ]
+) else (
+    echo [ A busca automática está ativada. ]
+)
+echo.
+echo / Como introduzir: localização do executável completa, sem aspas. /
+echo / Deixar vazio para ativar a busca automática. /
+echo.
+set /p "choice=Introduzir localização e premir Enter > "
+echo.
+if not "%choice%"=="le" (
+	set "exeDir=%choice%"
+	echo [ Localização definida: "!exeDir!" ]
+) else (
+	set "exeDir="
+    echo [ A busca automática está ativada. ]
+)
 goto :end-config
 
 :end-config
