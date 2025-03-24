@@ -271,7 +271,7 @@ echo.
 echo [S] para sim
 echo Outra Letra para sair
 echo.
-set /p "choice=Introduzir letra/s e premir Enter > "
+set /p "choice=Introduzir letra e premir Enter > "
 if /i "!choice!"=="S" goto :searchUnits
 goto :interrupt
 
@@ -371,7 +371,7 @@ for /f "delims=" %%a in ('dir /b /a-d /s "!dirToSearch!%fileName%" 2^>nul') do (
 		echo [N] para continuar pesquisa
 		echo Outra Letra para sair
 		echo.
-		set /p "choice=Introduzir letra/s e premir Enter > "
+		set /p "choice=Introduzir letra e premir Enter > "
 		if /i "!choice!"=="S" goto :install
 		if /i "!choice!"=="N" (
 			echo.
@@ -658,7 +658,7 @@ if %installed% equ 1 (
 echo.
 echo // [T] para Terminar Instalação //
 echo.
-set /p "choice=Introduzir letra/s e premir Enter > "
+set /p "choice=Introduzir letra e premir Enter > "
 if /i "!choice!"=="A" (
 	start "" "%helpFileName%"
 	goto :end2
