@@ -264,6 +264,21 @@ if not "%existingConfigNames%"=="%neededConfigNames%" (
 )
 
 :search
+if "!exeDir!" neq "" (
+	echo.
+	echo =========================================================
+	echo.
+	echo Foi indicada a seguinte localização para o executável do jogo:
+	echo !exeDir!
+	echo.
+	echo O jogo será procurado neste diretório.
+	echo.
+	echo Prime qualquer tecla para avançar.
+	echo.
+	pause >nul
+	goto :checkGameIntegrity
+)
+
 REM Inicializar a variável para saber se o diretório foi encontrado
 set "foundDir=0"
 echo Procurar automaticamente a pasta de instalação do jogo?
@@ -304,83 +319,95 @@ echo A procurar na unidade !dirToSearch!...
 echo.
 echo Não feches esta janela.
 for /f "delims=" %%a in ('dir /b /a-d /s "!dirToSearch!%fileName%" 2^>nul') do (
-    set "foundExeDir=%%~dpa"
-	REM echo upLev: !baseUpLevels!
+	set "foundExeDir=%%~dpa"
+	echo fed !foundExeDir!
+	call :checkGameIntegrity "!foundExeDir!"
+)
 
-	REM Inicializa baseDir com o caminho inicial
-	set "baseDir=!foundExeDir!"
+:checkGameIntegrity
+if "!exeDir!" neq "" (
+	set "foundExeDir=!exeDir!"
+) else (
+	set "foundExeDir=%~1"
+)
+echo !foundExeDir!
+REM echo upLev: !baseUpLevels!
 
-	REM Remove a barra final do caminho se existir
-	if "!baseDir:~-1!"=="\" set "baseDir=!baseDir:~0,-1!"
+REM Inicializa baseDir com o caminho inicial
+set "baseDir=!foundExeDir!"
 
-	REM Ciclo para subir o número especificado de níveis
-	for /L %%i in (1,1,!baseUpLevels!) do (
-		for %%j in ("!baseDir!\..\") do set "baseDir=%%~fj"
-	)
-	REM Adiciona a barra final para poder combinar com subpastas
-	set "baseDir=!baseDir!\"
+REM Remove a barra final do caminho se existir
+if "!baseDir:~-1!"=="\" set "baseDir=!baseDir:~0,-1!"
+
+REM Ciclo para subir o número especificado de níveis
+for /L %%i in (1,1,!baseUpLevels!) do (
+	for %%j in ("!baseDir!\..\") do set "baseDir=%%~fj"
+)
+REM Adiciona a barra final para poder combinar com subpastas
+set "baseDir=!baseDir!\"
+echo.
+REM echo foundExeDir: !foundExeDir!
+REM echo baseDir: !baseDir!
+
+echo.
+echo =========================================================
+echo.
+echo Diretório encontrado:
+echo !baseDir!
+echo.
+echo O instalador tentará encontrar o jogo neste diretório...
+echo.
+set "foundDir=1"
+
+for %%F in (!expectedFiles!) do (
+	echo Ficheiro esperado: %%~F
+	if not exist "!baseDir!%%~F" (
+		echo    Não foi encontrado.
+		set "foundDir=0"
+	) else echo    Encontrado.
+)
+
+for %%D in (!expectedDirs!) do (
+	echo Subdiretório esperado: %%~D
+	if not exist "!baseDir!%%~D" (
+		echo    Não foi encontrado.
+		set "foundDir=0"
+	) else echo    Encontrado.
+)
+
+set "searchedDirs=!searchedDirs!;!dirToSearch!"
+if !foundDir! equ 0 (
 	echo.
-	REM echo foundExeDir: !foundExeDir!
-	REM echo baseDir: !baseDir!
-	
+	echo Nem todos os ficheiros/subdiretórios
+	echo esperados foram encontrados neste diretório.
+	echo.
+	echo Jogo não encontrado neste diretório.
+) else (
+	set "exeDir=!foundExeDir!"
+	set "gameDir=!baseDir!"
 	echo.
 	echo =========================================================
 	echo.
-	echo Diretório encontrado:
-	echo !baseDir!
+	echo Jogo encontrado em:
+	echo !gameDir!
 	echo.
-	echo O instalador tentará encontrar o jogo neste diretório...
+	echo Instalar neste diretório?
 	echo.
-    set "foundDir=1"
-	
-	for %%F in (!expectedFiles!) do (
-		echo Ficheiro esperado: %%~F
-		if not exist "!baseDir!%%~F" (
-			echo    Não foi encontrado.
-			set "foundDir=0"
-		) else echo    Encontrado.
-	)
-	
-	for %%D in (!expectedDirs!) do (
-		echo Subdiretório esperado: %%~D
-		if not exist "!baseDir!%%~D" (
-			echo    Não foi encontrado.
-			set "foundDir=0"
-		) else echo    Encontrado.
-	)
-
-    set "searchedDirs=!searchedDirs!;!dirToSearch!"
-    if !foundDir! equ 0 (
+	echo [S] para sim
+	echo [N] para continuar pesquisa
+	echo Outra Letra para sair
+	echo.
+	set /p "choice=Introduzir letra e premir Enter > "
+	if /i "!choice!"=="S" goto :install
+	if /i "!choice!"=="N" (
 		echo.
-		echo Nem todos os ficheiros/subdiretórios
-		echo esperados foram encontrados neste diretório.
-		echo.
-		echo Jogo não encontrado neste diretório.
+		echo A pesquisa vai continuar...
 	) else (
-		set "exeDir=!foundExeDir!"
-		set "gameDir=!baseDir!"
-		echo.
-		echo =========================================================
-		echo.
-		echo Jogo encontrado em:
-		echo !gameDir!
-		echo.
-		echo Instalar neste diretório?
-		echo.
-		echo [S] para sim
-		echo [N] para continuar pesquisa
-		echo Outra Letra para sair
-		echo.
-		set /p "choice=Introduzir letra e premir Enter > "
-		if /i "!choice!"=="S" goto :install
-		if /i "!choice!"=="N" (
-			echo.
-			echo A pesquisa vai continuar...
-		) else (
-			goto :interrupt
-		)
+		goto :interrupt
 	)
 )
+
+
 echo.
 echo Não há mais diretórios a procurar nesta unidade.
 goto :eof
