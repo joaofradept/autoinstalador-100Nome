@@ -212,10 +212,10 @@ if %choice% gtr %i% (
 
 REM Define o nome do pacote escolhido
 set "packName=!packList[%choice%]!"
-echo.
-echo =========================================================
-echo.
 if %i% gtr 0 (
+	echo.
+	echo =========================================================
+	echo.
 	set "optionName=!packList[%choice%]:~17!"
 	if "!packList[%choice%]:~14,1!"=="" (
 		set "optionName=%packDefaultName%"
@@ -268,8 +268,8 @@ if not "%existingConfigNames%"=="%neededConfigNames%" (
 :search
 if "!exeDir!" neq "" (
 	echo.
-	echo =========================================================
 	echo.
+	ping localhost -n 2 >nul
 	echo Foi indicada a seguinte localização para o executável do jogo:
 	echo !exeDir!
 	echo.
@@ -322,7 +322,7 @@ echo.
 echo Não feches esta janela.
 for /f "delims=" %%a in ('dir /b /a-d /s "!dirToSearch!%fileName%" 2^>nul') do (
 	set "foundExeDir=%%~dpa"
-	echo fed !foundExeDir!
+	REM echo fed !foundExeDir!
 	call :checkGameIntegrity "!foundExeDir!"
 )
 
@@ -332,7 +332,7 @@ if "!exeDir!" neq "" (
 ) else (
 	set "foundExeDir=%~1"
 )
-echo !foundExeDir!
+REM echo !foundExeDir!
 REM echo upLev: !baseUpLevels!
 
 REM Inicializa baseDir com o caminho inicial
@@ -351,9 +351,9 @@ echo.
 REM echo foundExeDir: !foundExeDir!
 REM echo baseDir: !baseDir!
 
-echo.
 echo =========================================================
 echo.
+ping localhost -n 2 >nul
 echo Diretório encontrado:
 echo !baseDir!
 echo.
@@ -403,6 +403,7 @@ if !foundDir! equ 0 (
 	if /i "!choice!"=="S" goto :install
 	if /i "!choice!"=="N" (
 		echo.
+		ping localhost -n 2 >nul
 		echo A pesquisa vai continuar...
 	) else (
 		goto :interrupt
@@ -820,6 +821,9 @@ if not "%choice%"=="le" (
 goto :end-config
 
 :end-config
+echo.
+echo.
+echo Configurações atualizadas para esta sessão.
 echo.
 echo Prime qualquer tecla para avançar.
 echo.
