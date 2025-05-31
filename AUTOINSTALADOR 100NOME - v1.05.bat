@@ -220,8 +220,10 @@ if %i% gtr 0 (
 	if "!packList[%choice%]:~14,1!"=="" (
 		set "optionName=%packDefaultName%"
 	)
+	ping 127.0.0.1 -n 1 -w 50 >nul
 	echo O pacote selecionado foi: !optionName!
 	echo.
+	ping localhost -n 2 >nul
 )
 
 :loadPackVariables
