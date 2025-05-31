@@ -713,6 +713,7 @@ if %installed% equ 1 (
 	if /i "!choice!"=="J" (
 		cd /d "%exeDir%"
 		start "" "%fileName%"
+		cd /d "%~dp0"
 		goto :end2
 	)
 )
