@@ -278,7 +278,7 @@ if "!exeDir!" neq "" (
 	echo Prime qualquer tecla para avançar.
 	echo.
 	pause >nul
-	goto :checkGameIntegrity
+	call :checkGameIntegrity "!foundExeDir!"
 )
 
 REM Inicializar a variável para saber se o diretório foi encontrado
