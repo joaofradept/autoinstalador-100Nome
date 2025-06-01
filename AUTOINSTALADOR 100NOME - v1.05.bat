@@ -282,6 +282,7 @@ if "!exeDir!" neq "" (
 )
 
 REM Inicializar a variável para saber se o diretório foi encontrado
+set i=0
 set "foundDir=0"
 echo Procurar automaticamente a pasta de instalação do jogo?
 echo.
@@ -289,52 +290,80 @@ echo [S] para sim
 echo Outra Letra para sair
 echo.
 set /p "choice=Introduzir letra e premir Enter > "
-if /i "!choice!"=="S" goto :searchUnits
+if /i "!choice!"=="S" call :searchUnits
 goto :interrupt
 
 :searchUnits
-REM Procurar o ficheiro em todas as unidades
-for %%D in (!dirsToSearch!) do (
-	echo.
-	echo =========================================================
-	echo.
-    echo O diretório de !gameName! será procurado numa nova unidade.
-    call :searchDir "%%~D:\"    
+REM Retoma se for necessário
+if not "%1"=="" (
+    set /a i=%1
+    set j=0
+    for %%D in (!dirsToSearch!) do (
+        if !j! GEQ !i! (
+            call :searchDir "%%D:\"
+            if "!foundDir!"=="1" goto :found
+        )
+        set /a j+=1
+    )
+    goto :notfound
 )
 
-if "!foundDir!"=="0" (
-    echo.
-	echo =========================================================
-	echo.
-    echo Jogo não encontrado em nenhuma unidade.
-    goto :error
+REM Busca normal (sem retoma)
+for %%D in (!dirsToSearch!) do (
+    call :searchDir "%%D:\"
+    if "!foundDir!"=="1" goto :found
+    set /a i+=1
+)
+
+goto :notfound
+
+REM Retomar o ciclo no ponto em que se ficou
+:resume-searchUnits
+set /a i=%1
+set j=0
+for %%D in (!dirsToSearch!) do (
+    call :searchDir "%%D:\"
+    if "!foundDir!"=="1" goto :found
+    set /a i+=1
 )
 
 :searchDir
 set "dirToSearch=%~1"
-if "!searchedDirs!" neq "" (
-    if "!searchedDirs!" neq "!searchedDirs:!dirToSearch!;=!" goto :noMoreDisks
-)
+echo A procurar em !dirToSearch!...
 
-echo.
-echo A procurar na unidade !dirToSearch!...
-echo.
-echo Não feches esta janela.
 for /f "delims=" %%a in ('dir /b /a-d /s "!dirToSearch!%fileName%" 2^>nul') do (
-	set "foundExeDir=%%~dpa"
-	REM echo fed !foundExeDir!
-	call :checkGameIntegrity "!foundExeDir!"
+    set "foundExeDir=%%~dpa"
+    call :checkGameIntegrity "!foundExeDir!"
+    if "!foundDir!"=="1" goto :EOF
 )
+goto :EOF
 
 :checkGameIntegrity
-if "!exeDir!" neq "" (
-	set "foundExeDir=!exeDir!"
-) else (
-	set "foundExeDir=%~1"
+REM Recebe %~1 como diretório candidato
+set "foundExeDir=%~1"
+call :tryGameDir "%~1"
+
+REM Só ir para :found se o diretório foi mesmo aceite (user escolheu [S])
+if "!foundDir!"=="1" (
+	goto :found
 )
+
+REM Caso contrário, continua a pesquisa
+goto :EOF
+
+:found
+echo.
+echo Diretório confirmado: !foundExeDir!
+REM Continua com a instalação ou o que quiseres
+goto :eof
+
+:notfound
+echo Nenhum diretório válido encontrado.
+goto :eof
 REM echo !foundExeDir!
 REM echo upLev: !baseUpLevels!
 
+:tryGameDir
 REM Inicializa baseDir com o caminho inicial
 set "baseDir=!foundExeDir!"
 
@@ -405,6 +434,8 @@ if !foundDir! equ 0 (
 		echo.
 		ping localhost -n 2 >nul
 		echo A pesquisa vai continuar...
+		set "foundDir=0"
+		goto :eof
 	) else (
 		goto :interrupt
 	)
