@@ -417,10 +417,8 @@ if !foundDir! equ 0 (
 	set "exeDir=!foundExeDir!"
 	set "gameDir=!baseDir!"
 	echo.
-	echo =========================================================
-	echo.
-	echo Jogo encontrado em:
-	echo !gameDir!
+	echo A integridade do jogo foi confirmada neste diretório.
+	echo A instalação pode prosseguir.
 	echo.
 	echo Instalar neste diretório?
 	echo.
