@@ -42,7 +42,7 @@ set "backupPath=!spContentFolder!\cópia de segurança"
 set "partBackupEnding= - parcial"
 set "performBackup=1"
 set "installed=0"
-set "scriptVersion=1.5.1_220325"
+set "scriptVersion=1.5.2_020625"
 
 REM Verifica se já está a ser executado como administrador
 net session >nul 2>&1
@@ -167,7 +167,10 @@ if %i%==0 (
 	)
 	echo.
 	echo Prime qualquer tecla para avançar.
+	echo.
     pause >nul
+	echo =========================================================
+	echo.
     set choice=0
 ) else if %i% gtr 0 (
 	echo Os seguintes pacotes de tradução estão disponíveis para instalação:
@@ -267,8 +270,6 @@ if not "%existingConfigNames%"=="%neededConfigNames%" (
 
 :search
 if "!exeDir!" neq "" (
-	echo.
-	echo.
 	ping localhost -n 2 >nul
 	echo Foi indicada a seguinte localização para o executável do jogo:
 	echo !exeDir!
@@ -278,7 +279,7 @@ if "!exeDir!" neq "" (
 	echo Prime qualquer tecla para avançar.
 	echo.
 	pause >nul
-	call :checkGameIntegrity "!foundExeDir!"
+	call :checkGameIntegrity "!exeDir!"
 )
 
 REM Inicializar a variável para saber se o diretório foi encontrado
@@ -343,7 +344,7 @@ REM Recebe %~1 como diretório candidato
 set "foundExeDir=%~1"
 call :tryGameDir "%~1"
 
-REM Só ir para :found se o diretório foi mesmo aceite (user escolheu [S])
+REM Só ir para :found se o diretório foi mesmo aceite
 if "!foundDir!"=="1" (
 	goto :found
 )
@@ -353,13 +354,9 @@ goto :EOF
 
 :found
 echo.
-echo Diretório confirmado: !foundExeDir!
-REM Continua com a instalação ou o que quiseres
+REM Continua com a instalação
 goto :eof
 
-:notfound
-echo Nenhum diretório válido encontrado.
-goto :eof
 REM echo !foundExeDir!
 REM echo upLev: !baseUpLevels!
 
@@ -383,7 +380,7 @@ REM echo baseDir: !baseDir!
 echo =========================================================
 echo.
 ping localhost -n 2 >nul
-echo Diretório encontrado:
+echo Foi encontrado o seguinte diretório:
 echo !baseDir!
 echo.
 echo O instalador tentará encontrar o jogo neste diretório...
@@ -417,7 +414,7 @@ if !foundDir! equ 0 (
 	set "exeDir=!foundExeDir!"
 	set "gameDir=!baseDir!"
 	echo.
-	echo A integridade do jogo foi confirmada neste diretório.
+	echo O jogo foi encontrado neste diretório.
 	echo A instalação pode prosseguir.
 	echo.
 	echo Instalar neste diretório?
@@ -431,6 +428,7 @@ if !foundDir! equ 0 (
 	if /i "!choice!"=="N" (
 		echo.
 		ping localhost -n 2 >nul
+		
 		echo A pesquisa vai continuar...
 		set "foundDir=0"
 		goto :eof
@@ -561,6 +559,7 @@ if exist "!dirName!" (
 )
 
 :backup
+ping localhost -n 2 >nul
 echo.
 echo =========================================================
 echo.
@@ -661,6 +660,7 @@ for %%F in (!filesForRemoval!) do (
 )
 
 :copyFiles
+ping localhost -n 2 >nul
 REM Copiar todos os ficheiros e pastas do diretório atual para o diretório do jogo
 echo.
 echo =========================================================
