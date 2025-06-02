@@ -270,10 +270,10 @@ if not "%existingConfigNames%"=="%neededConfigNames%" (
 
 :search
 if "!exeDir!" neq "" (
-	ping localhost -n 2 >nul
 	echo Foi indicada a seguinte localização para o executável do jogo:
 	echo !exeDir!
 	echo.
+	ping localhost -n 2 >nul
 	echo O jogo será procurado neste diretório.
 	echo.
 	echo Prime qualquer tecla para avançar.
@@ -379,10 +379,10 @@ REM echo baseDir: !baseDir!
 
 echo =========================================================
 echo.
-ping localhost -n 2 >nul
 echo Foi encontrado o seguinte diretório:
 echo !baseDir!
 echo.
+ping localhost -n 2 >nul
 echo O instalador tentará encontrar o jogo neste diretório...
 echo.
 set "foundDir=1"
@@ -427,9 +427,9 @@ if !foundDir! equ 0 (
 	if /i "!choice!"=="S" goto :install
 	if /i "!choice!"=="N" (
 		echo.
-		ping localhost -n 2 >nul
-		
 		echo A pesquisa vai continuar...
+		echo.
+		ping localhost -n 2 >nul
 		set "foundDir=0"
 		goto :eof
 	) else (
@@ -559,13 +559,13 @@ if exist "!dirName!" (
 )
 
 :backup
-ping localhost -n 2 >nul
 echo.
 echo =========================================================
 echo.
 if !performBackup! equ 0 (
 	echo Alguns ficheiros a remover serão salvaguardados em:
 	echo !backupPath!
+	ping localhost -n 2 >nul
 	goto :removeAndBackup
 )
 
@@ -660,7 +660,6 @@ for %%F in (!filesForRemoval!) do (
 )
 
 :copyFiles
-ping localhost -n 2 >nul
 REM Copiar todos os ficheiros e pastas do diretório atual para o diretório do jogo
 echo.
 echo =========================================================
@@ -672,6 +671,7 @@ echo %~dp0!packName!
 echo Serão copiados para:
 echo !gameDir!
 echo.
+ping localhost -n 2 >nul
 xcopy /e /i /y "%~dp0!packName!\*" "!gameDir!"
 REM robocopy "%~dp0!packName!" "!gameDir!" /e /copyall /r:3 /w:5 /mt
 set "scriptFileName=%~nx0"
